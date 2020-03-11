@@ -1,0 +1,27 @@
+language: bash
+
+### Renaming all *.yaml files to *.template
+script:
+    - for f in *.yaml; do mv -- "$f" "${f%.yaml}.template"; done
+
+### Sending repo files to S3
+deploy:
+  - provider: s3
+    on:
+      branch: master
+    # You can refer to environment variables from Travis repo settings!
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    bucket: $S3_BUCKET
+    skip_cleanup: true
+    acl: public_read
+  - provider: s3
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH != "master"
+    # You can refer to environment variables from Travis repo settings!
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    bucket: $S3_BUCKET_TEST
+    skip_cleanup: true
+    acl: public_read
