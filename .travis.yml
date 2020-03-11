@@ -1,8 +1,10 @@
 language: bash
 
-### Renaming all *.yaml files to *.template
 script:
+  # Renaming all *.yaml files to *.template
   - for f in $(find . -name "*.yaml"); do mv -- "$f" "${f%.yaml}.template"; done
+  # Deleting files other than templates
+  - find . -type f ! -name '*.template' -delete
 
 ### Sending repo files to S3
 deploy:
