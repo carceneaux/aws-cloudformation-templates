@@ -2,8 +2,7 @@ language: bash
 
 ### Renaming all *.yaml files to *.template
 script:
-  - ls -la
-  - for f in *.yaml; do mv -- "$f" "${f%.yaml}.template"; done
+  - for f in $(find . -name "*.yaml"); do mv -- "$f" "${f%.yaml}.template"; done
 
 ### Sending repo files to S3
 deploy:
