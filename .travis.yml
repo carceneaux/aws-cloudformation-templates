@@ -6,7 +6,7 @@ script:
   # Deleting files other than templates
   - find . -type f ! -name '*.template' -delete
 
-### Sending repo files to S3
+### Sending templates to S3
 deploy:
   - provider: s3
     on:
