@@ -1,7 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Creates a S3 bucket & IAM User to be used with Veeam Capacity Tier wit Immutability disabled.
-# Quick Start Template: https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://cf-templates-arsano.s3.amazonaws.com/veeam/cf-veeam-s3.template&stackName=veeam-s3
+Description: Creates a S3 bucket & IAM User to be used with Veeam Capacity Tier with Immutability enabled.
 
 Parameters:
   BucketName:
@@ -26,6 +25,9 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
+      ObjectLockEnabled: true
+      VersioningConfiguration:
+        Status: Enabled
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -41,26 +43,33 @@ Resources:
       Path: /
       UserName: !Ref Username
       Policies:
-      - PolicyName: s3-veeam-access
+      - PolicyName: s3-veeam-immutability-access
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
           - Effect: Allow
             Action:
-            - s3:PutObject
-            - s3:GetObject
             - s3:DeleteObject
-            - s3:ListBucket
+            - s3:DeleteObjectVersion
             - s3:GetBucketLocation
-            - s3:GetBucketVersioning
             - s3:GetBucketObjectLockConfiguration
+            - s3:GetBucketVersioning
+            - s3:GetObject
+            - s3:GetObjectLegalHold
+            - s3:GetObjectRetention
+            - s3:GetObjectVersion
+            - s3:ListBucket
+            - s3:ListBucketVersions
+            - s3:PutObject
+            - s3:PutObjectLegalHold
+            - s3:PutObjectRetention
             Resource:
             - !Sub arn:aws:s3:::${BucketName}/*
             - !Sub arn:aws:s3:::${BucketName}
           - Effect: Allow
             Action:
-            - s3:ListAllMyBuckets
             - s3:HeadBucket
+            - s3:ListAllMyBuckets
             Resource: '*'
 
   # IAM Access Key
